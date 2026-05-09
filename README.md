@@ -1,48 +1,37 @@
 # SHL Assessment Recommender
 
-Conversational agent that takes a hiring manager from a vague intent to a grounded
-shortlist of SHL Individual Test Solution assessments through multi-turn dialogue.
+The SHL catalog contains 400+ Individual Test Solutions spanning 10 assessment types. Hiring managers rarely know the right vocabulary to navigate keyword search — they know the role, not the product name. The recommender bridges this by turning a natural-language conversation into a grounded, catalog-validated shortlist.
 
-Built for the SHL Labs AI Intern take-home assignment.
+The system operates as a stateless FastAPI service. Every POST /chat call carries the full conversation history; no server-side session state is stored. This matches the spec and makes the service trivially scalable.
+
+API Link: https://shl-recommender-qttx.onrender.com/docs
+
 
 ---
 
 ## Architecture
 
 ```
-POST /chat (stateless history)
-        │
-        ▼
-   Guard layer ──► blocked? → short-circuit reply
-        │
-        ▼
-Constraint extraction (claude-haiku: fast, cheap)
-        │
-        ▼
-FAISS semantic search + keyword filter → catalog context
-        │
-        ▼
-Main LLM reasoning (claude-sonnet: full context + catalog)
-        │
-        ▼
-Parse <RECOMMENDATIONS> block → validate URLs against catalog
-        │
-        ▼
-ChatResponse { reply, recommendations, end_of_conversation }
-```
+POST /chat
+    │
+    ▼
+Input validation + guard layer
+    │
+    ▼
+Constraint extraction
+    │
+    ▼
+FAISS semantic retrieval + keyword filtering
+    │
+    ▼
+Context-aware LLM recommendation generation (Groq)
+    │
+    ▼
+Recommendation validation against catalog
+    │
+    ▼
+Structured ChatResponse
 
-**Key design decisions:**
-
-| Decision | Rationale |
-|---|---|
-| Stateless API | Full history per request; no server session; trivially scalable |
-| Two-stage retrieval | FAISS for meaning + keyword for exact matches; better than either alone |
-| URL integrity guarantee | All URLs validated against Set[str] loaded from catalog at startup; hallucination structurally impossible |
-| Pre-LLM guard layer | Injection/off-topic caught before spending tokens |
-| Separate constraint extraction | Cheap haiku call extracts structured filters; sonnet focuses on reasoning |
-| Turn budget enforcement | Agent warned at turn 6; hard cut at 8 |
-
----
 
 ## Quick Start
 
@@ -53,41 +42,7 @@ python 3.11+
 pip install -r requirements.txt
 ```
 
-### 2. Configure
 
-```bash
-cp .env.example .env
-
-```
-
-### 3. Place catalog
-
-Put `catalog.json` in `data/`. The file should be the SHL product catalog JSON
-(array of assessment objects with `entity_id`, `name`, `link`, `keys`, etc.).
-
-### 4. Build FAISS index
-
-```bash
-python -m scripts.build_index
-```
-
-This creates `data/index.faiss` and `data/index_ids.npy`. Run once; re-run
-if catalog changes.
-
-### 5. Run
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Or with Docker:
-
-```bash
-docker build -t shl-recommender .
-docker run -p 8000:8000 --env-file .env shl-recommender
-```
-
----
 
 ## API Reference
 
@@ -180,8 +135,7 @@ The agent is graded on:
 
 | Component | Choice | Reason |
 |---|---|---|
-| LLM (main) | `claude-sonnet-4-20250514` | Best reasoning, 1K output |
-| LLM (extraction) | `claude-haiku-4-5-20251001` | Fast + cheap constraint parsing |
+| LLM (main) | `Groq llama-3.1-8b-instant` | Best reasoning, 1K output |
 | Embeddings | `all-MiniLM-L6-v2` | 384-dim, fast, good general retrieval |
 | Vector store | FAISS (IndexFlatIP) | CPU-friendly, exact cosine, no infra |
 | API framework | FastAPI | Async, auto-schema, production-ready |
