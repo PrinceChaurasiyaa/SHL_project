@@ -108,8 +108,9 @@ async def generic_exception_handler(request: Request, exc: Exception):
 @app.get("/")
 async def root():
     return {
-        "message": "SHL Recommender API is running",
-        "docs": "/docs"
+        "message": "SHL Recommender API is running. Visit Swagger Docs: https://shl-recommender-qttx.onrender.com/docs",
+        "Get": "/health",
+        "Post": "chat"
     }
 
 @app.get("/health", response_model=HealthResponse, tags=["ops"])
