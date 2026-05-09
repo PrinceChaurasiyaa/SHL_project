@@ -76,9 +76,9 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------------------------
+
 # Middleware: request timing
-# ---------------------------------------------------------------------------
+
 
 @app.middleware("http")
 async def add_timing_header(request: Request, call_next):
@@ -89,9 +89,9 @@ async def add_timing_header(request: Request, call_next):
     return response
 
 
-# ---------------------------------------------------------------------------
+
 # Exception handlers
-# ---------------------------------------------------------------------------
+
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
@@ -102,9 +102,15 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-# ---------------------------------------------------------------------------
+
 # Routes
-# ---------------------------------------------------------------------------
+
+@app.get("/")
+async def root():
+    return {
+        "message": "SHL Recommender API is running",
+        "docs": "/docs"
+    }
 
 @app.get("/health", response_model=HealthResponse, tags=["ops"])
 async def health() -> HealthResponse:
@@ -163,9 +169,9 @@ async def chat(request: ChatRequest) -> ChatResponse:
         )
 
 
-# ---------------------------------------------------------------------------
+
 # Dev server entrypoint
-# ---------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,9 +6,9 @@ Centralized here to make evaluation and iteration easy.
 """
 from __future__ import annotations
 
-# ---------------------------------------------------------------------------
+
 # SYSTEM PROMPT
-# ---------------------------------------------------------------------------
+
 
 SYSTEM_PROMPT = """\
 You are the SHL Assessment Recommender — an expert assistant that helps hiring managers \
@@ -103,9 +103,9 @@ and note any assumptions.
 """
 
 
-# ---------------------------------------------------------------------------
+
 # CATALOG CONTEXT INJECTION
-# ---------------------------------------------------------------------------
+
 
 def build_catalog_context_block(catalog_context: str) -> str:
     return f"""
@@ -118,9 +118,9 @@ The following are real SHL assessments you may recommend. Use ONLY these entries
 """
 
 
-# ---------------------------------------------------------------------------
+
 # TURN BUDGET WARNING (injected when turn count >= 6)
-# ---------------------------------------------------------------------------
+
 
 TURN_BUDGET_WARNING = """
 [SYSTEM: You are on turn {turn_number} of 8. You MUST produce a recommendation \
@@ -128,9 +128,9 @@ this turn even if context is incomplete. State any assumptions clearly.]
 """
 
 
-# ---------------------------------------------------------------------------
+
 # CONSTRAINT EXTRACTION PROMPT
-# ---------------------------------------------------------------------------
+
 # Used in a separate lightweight LLM call to extract structured constraints
 # from the conversation so the retrieval engine can filter correctly.
 
@@ -182,9 +182,9 @@ Extract the constraints.
 """
 
 
-# ---------------------------------------------------------------------------
+
 # COMPARISON PROMPT (appended to system when in comparison mode)
-# ---------------------------------------------------------------------------
+
 
 COMPARISON_ADDENDUM = """
 [COMPARISON MODE: The user wants to compare specific assessments. \
@@ -194,9 +194,9 @@ duration, key differentiators. Be specific and factual.]
 """
 
 
-# ---------------------------------------------------------------------------
+
 # HELPERS
-# ---------------------------------------------------------------------------
+
 
 def format_conversation_for_extraction(messages: list[dict]) -> str:
     """Convert message list to readable text for constraint extraction."""

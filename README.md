@@ -57,7 +57,7 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY
+
 ```
 
 ### 3. Place catalog
@@ -153,19 +153,6 @@ Returns `200` when ready. First call allows up to 2 minutes for cold start.
 | S | Simulations |
 
 ---
-
-## Running Tests
-
-```bash
-# Unit tests (no API key needed)
-pytest tests/ -v
-
-# With coverage
-pytest tests/ --cov=app --cov-report=term-missing
-
-# Integration tests (requires real API key)
-pytest tests/ --integration -v
-```
 
 ---
 

@@ -63,9 +63,9 @@ class Agent:
         logger.info("Groq key loaded: %s...", api_key[:8]) 
         self._catalog_names = [e.name for e in self._catalog.entries]
 
-    # ------------------------------------------------------------------
+    
     # Main entry point
-    # ------------------------------------------------------------------
+    
 
     def process(self, request: ChatRequest) -> ChatResponse:
         messages = [m.model_dump() for m in request.messages]
@@ -151,9 +151,9 @@ class Agent:
             end_of_conversation=eoc,
         )
 
-    # ------------------------------------------------------------------
+    
     # Constraint extraction (lightweight LLM call)
-    # ------------------------------------------------------------------
+    
 
     def _extract_constraints(self, messages: list[dict]) -> dict:
         """
@@ -191,9 +191,9 @@ class Agent:
             logger.warning("Constraint extraction failed: %s", exc)
             return {}
 
-    # ------------------------------------------------------------------
+    
     # LLM call (main reasoning)
-    # ------------------------------------------------------------------
+    
 
     def _call_llm(self, system: str, messages: list[dict]) -> str:
         """Call Claude with the full conversation history."""
@@ -240,9 +240,9 @@ class Agent:
 
         return str(content)
 
-    # ------------------------------------------------------------------
+    
     # Response parsing
-    # ------------------------------------------------------------------
+   
 
     def _parse_recommendations(
         self, llm_reply: str
@@ -284,9 +284,9 @@ class Agent:
             logger.warning("Failed to parse recommendations JSON: %s\n%s", exc, json_str)
             return [], clean_reply
 
-    # ------------------------------------------------------------------
+   
     # End-of-conversation detection
-    # ------------------------------------------------------------------
+    
 
     def _detect_end_of_conversation(
         self,

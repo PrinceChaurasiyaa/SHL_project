@@ -73,9 +73,9 @@ class RetrievalEngine:
     def __init__(self, catalog: Optional[Catalog] = None) -> None:
         self._catalog = catalog or Catalog.load()
 
-    # ------------------------------------------------------------------
+    
     # Public API
-    # ------------------------------------------------------------------
+    
 
     def search(
         self,
@@ -166,9 +166,9 @@ class RetrievalEngine:
         )
         return self._catalog.build_context_for_llm(hits, max_entries=max_entries)
 
-    # ------------------------------------------------------------------
+    
     # Internal
-    # ------------------------------------------------------------------
+    
 
     def _semantic_search(self, query: str, top_k: int) -> list[CatalogEntry]:
         try:
